@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-
-
+using System.Linq;
 namespace third_class
 {
     class Program
     {
         public static void Main() {
 
-            List<int> answer = new List<int>();
+            int[] answer;
 
             int n = int.Parse(Console.ReadLine());
 
@@ -19,15 +18,15 @@ namespace third_class
                 arr[i] = int.Parse(Console.ReadLine());
             }
 
-            answer = stringOfPrimeFactors(arr);
+            answer = stringOfPrimeFactors(arr).ToArray();
 
-            answer.Sort();
+            answer.OrderBy(i => i);
 
-            clear(ref answer);
+            answer = answer.Distinct().ToArray();
 
             string ANSWER = "";
 
-            for (int i = 0; i < answer.Count; i++){
+            for (int i = 0; i < answer.Length; i++){
 
                 int tempSum = 0;
 
@@ -35,72 +34,44 @@ namespace third_class
 
                     if (arr[k] % answer[i] == 0) {
 
-                        tempSum += arr[k];
-                            
+                        tempSum += arr[k];      
                     }
                 }
 
                 ANSWER += $"({answer[i]} {tempSum}) ";
             }
+
 			Console.WriteLine(ANSWER);
         }
 
         public static List<int> stringOfPrimeFactors(int[] list)
         {
+
             int size = list.Length;
 
+            int[] copy = new int[size];
+
+            Array.Copy(list, copy, size);
+                     
             List<int> primes = new List<int>();
 
             for (int i = 0; i < size; i++)
-            {
-                for (int k = 2; k <= abs(list[i]); k++)
+            {   
+                for (int k = 2; k <= Math.Abs(copy[i]); k++)
                 {
-                    if (list[i] % k == 0 && isPrime(k))
-                    {
-                        primes.Add(k);
+                    while (copy[i] % k == 0) {
+                       
+                        copy[i] /= k;
                     }
+                    if (list[i] % k == 0) {
 
+                    primes.Add(k);
+                    }  
                 }
             }
             return primes;
         }
-
-        public static bool isPrime(int num)
-        {
-            for (int i = 2; i <= Math.Sqrt(num); i++)
-            {
-                if (num % i == 0) return false;
-
-            }
-            return true;
-        }
-        
-        public static int abs(int num) {
-
-            if (num < 0)
-            {
-
-                return -num;
-            }
-            else {
-
-                return num;
-            }
-            
-        }
-
-        public static void clear(ref List<int> list)
-        {
-            int size = list.Count;
-
-            for (int i = 1; i < size; i++) {
-                if (list[i] == list[i - 1]) {
-                    list.RemoveAt(i);
-                    size--;
-                    i--;
-                }
-            }
-        }
+      
     }
 }
 
